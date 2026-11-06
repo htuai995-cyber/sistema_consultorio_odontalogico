@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Usuario | Sonrisa Perfecta</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card" style="max-width: 520px;">
+    <div class="login-header">
+      <div class="login-logo">🦷</div>
+      <h1 class="login-title">Crear Cuenta</h1>
+      <p class="login-subtitle">Sistema de Gestión Odontológica</p>
+    </div>
+    <div class="login-body">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-circle"></i>
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" autocomplete="on" novalidate>
+        {% csrf_token %}
+        <div class="grid-cols-2">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.first_name.id_for_label }}">
+              {{ form.first_name.label }}
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <div class="invalid-feedback" style="display:block;">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.last_name.id_for_label }}">
+              {{ form.last_name.label }}
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <div class="invalid-feedback" style="display:block;">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.username.id_for_label }}">
+            <i class="fas fa-user" style="color: var(--primary)"></i> {{ form.username.label }}
+          </label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="invalid-feedback" style="display:block;">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.email.id_for_label }}">
+            <i class="fas fa-envelope" style="color: var(--primary)"></i> {{ form.email.label }}
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="invalid-feedback" style="display:block;">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="grid-cols-2">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password.id_for_label }}">
+              <i class="fas fa-lock" style="color: var(--primary)"></i> {{ form.password.label }}
+            </label>
+            {{ form.password }}
+            {% if form.password.errors %}
+              <div class="invalid-feedback" style="display:block;">{{ form.password.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password_confirm.id_for_label }}">
+              <i class="fas fa-lock" style="color: var(--primary)"></i> {{ form.password_confirm.label }}
+            </label>
+            {{ form.password_confirm }}
+            {% if form.password_confirm.errors %}
+              <div class="invalid-feedback" style="display:block;">{{ form.password_confirm.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 1rem; margin-top: 0.5rem;">
+          <i class="fas fa-user-plus"></i> Registrar Cuenta
+        </button>
+      </form>
+
+      <div style="text-align:center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #dadce0;">
+        <p class="text-muted small">
+          ¿Ya tienes una cuenta?
+          <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">
+            Inicia sesión aquí
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+

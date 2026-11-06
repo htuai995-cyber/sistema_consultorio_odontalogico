@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+  <div class="card-header">
+    <span class="card-title"><i class="fas fa-prescription-bottle-alt" style="color:var(--primary)"></i> {{ titulo }}</span>
+    <a href="{% url 'receta_lista' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+  </div>
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">{{ form.diagnostico.label }}</label>
+        {{ form.diagnostico }}
+        {% for e in form.diagnostico.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="grid-cols-2">
+        <div class="form-group">
+          <label class="form-label">{{ form.medicamento.label }}</label>
+          {{ form.medicamento }}
+          {% for e in form.medicamento.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.dosis.label }}</label>
+          {{ form.dosis }}
+          {% for e in form.dosis.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.frecuencia.label }}</label>
+          {{ form.frecuencia }}
+          {% for e in form.frecuencia.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.duracion.label }}</label>
+          {{ form.duracion }}
+          {% for e in form.duracion.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.fecha_emision.label }}</label>
+          {{ form.fecha_emision }}
+          {% for e in form.fecha_emision.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">{{ form.indicaciones.label }}</label>
+        {{ form.indicaciones }}
+        {% for e in form.indicaciones.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ accion }}</button>
+        <a href="{% url 'receta_lista' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

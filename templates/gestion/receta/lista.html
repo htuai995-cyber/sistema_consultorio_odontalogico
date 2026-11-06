@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Recetas Médicas{% endblock %}
+{% block content %}
+<div class="print-header">
+  <h2>Consultorio Odontológico "Sonrisa Perfecta"</h2>
+  <h4>Reporte de Recetas Médicas</h4>
+  <p class="small text-muted">Fecha de impresión: {% now "d/m/Y H:i" %}</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-prescription-bottle-alt" style="color:var(--primary)"></i> Recetas Médicas
+      <span class="badge badge-activo" style="margin-left: 0.5rem;">{{ total_registros }}</span>
+    </span>
+    <div class="d-flex gap-2">
+      <button onclick="window.print()" class="btn btn-secondary btn-sm" title="Imprimir reporte">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+      <button onclick="descargarPDF('{% url 'receta_reporte_pdf' %}')" class="btn btn-danger btn-sm" title="Descargar como archivo PDF">
+        <i class="fas fa-file-pdf"></i> Guardar PDF
+      </button>
+      <a href="{% url 'receta_crear' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Nueva Receta
+      </a>
+    </div>
+  </div>
+  <div class="card-body">
+    <form method="get" class="search-bar mb-3" style="flex-wrap: wrap;">
+      <div class="search-input-group" style="flex: 2; min-width: 220px;">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Buscar medicamento o paciente...">
+      </div>
+      <div style="flex: 1; min-width: 150px;">
+        <input type="date" name="fecha" value="{{ fecha }}" class="form-control" title="Filtrar por fecha de emisión">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
+      {% if q or fecha %}
+        <a href="{% url 'receta_lista' %}" class="btn btn-secondary">Limpiar</a>
+      {% endif %}
+    </form>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Paciente</th>
+            <th>Medicamento</th>
+            <th>Dosis</th>
+            <th>Frecuencia</th>
+            <th>Duración</th>
+            <th>Indicaciones</th>
+            <th>Emisión</th>
+            <th class="no-print">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in recetas %}
+          <tr>
+            <td class="text-muted small">{{ rec.id }}</td>
+            <td>
+              <a href="{% url 'paciente_detalle' rec.diagnostico.cita.paciente.pk %}" class="text-primary" style="font-weight:600; text-decoration:none;">
+                {{ rec.diagnostico.cita.paciente.nombre_completo }}
+              </a>
+            </td>
+            <td><strong>{{ rec.medicamento }}</strong></td>
+            <td class="small text-muted">{{ rec.dosis }}</td>
+            <td class="small text-muted">{{ rec.frecuencia }}</td>
+            <td class="small text-muted">{{ rec.duracion }}</td>
+            <td class="small text-muted">{{ rec.indicaciones|truncatechars:40 }}</td>
+            <td class="small">{{ rec.fecha_emision|date:"d/m/Y" }}</td>
+            <td class="no-print">
+              <div class="d-flex gap-2">
+                <a href="{% url 'receta_individual_pdf' rec.pk %}" target="_blank" class="btn btn-secondary btn-sm" title="Imprimir Receta Médica Oficial"><i class="fas fa-print"></i></a>
+                <a href="{% url 'receta_editar' rec.pk %}" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'receta_eliminar' rec.pk %}" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="9" class="text-center text-muted" style="padding:2rem;">No se encontraron recetas con los filtros indicados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if recetas.has_other_pages %}
+    <div class="pagination no-print">
+      {% if recetas.has_previous %}
+        <a href="?page={{ recetas.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link"><i class="fas fa-chevron-left"></i></a>
+      {% endif %}
+      {% for num in recetas.paginator.page_range %}
+        <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link {% if recetas.number == num %}active{% endif %}">{{ num }}</a>
+      {% endfor %}
+      {% if recetas.has_next %}
+        <a href="?page={{ recetas.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link"><i class="fas fa-chevron-right"></i></a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

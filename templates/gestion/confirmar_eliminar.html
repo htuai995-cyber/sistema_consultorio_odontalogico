@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="card confirm-card">
+  <div class="card-body" style="text-align:center; padding: 2rem;">
+    <div class="confirm-icon">
+      <i class="fas fa-trash-alt"></i>
+    </div>
+    <h3 style="margin-bottom: 0.75rem; font-size: 1.3rem;">¿Eliminar registro?</h3>
+    <p class="text-muted" style="margin-bottom: 1.5rem;">
+      Está a punto de eliminar: <br>
+      <strong style="color: var(--dark);">{{ objeto }}</strong><br>
+      Esta acción no se puede deshacer.
+    </p>
+    <div class="d-flex gap-3" style="justify-content:center;">
+      <a href="{% url cancelar_url %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Cancelar
+      </a>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash-alt"></i> Sí, eliminar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

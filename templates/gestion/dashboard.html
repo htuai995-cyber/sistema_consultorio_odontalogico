@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- KPIs principales -->
+<div class="grid-cols-4 mb-4">
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-user-injured"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_pacientes }}</div>
+      <div class="stat-label">Total Pacientes</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-user-md"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_odontologos }}</div>
+      <div class="stat-label">Odontólogos Activos</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ citas_hoy }}</div>
+      <div class="stat-label">Citas Hoy</div>
+      <div>
+        <span class="badge badge-pendiente">{{ citas_pendientes }} pendientes</span>
+      </div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="fas fa-tooth"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ tratamientos_en_proceso }}</div>
+      <div class="stat-label">En Tratamiento</div>
+    </div>
+  </div>
+</div>
+
+<!-- Segunda fila -->
+<div class="grid-cols-4 mb-4">
+  <div class="stat-card">
+    <div class="stat-icon teal"><i class="fas fa-calendar-alt"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_citas }}</div>
+      <div class="stat-label">Total Citas</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon red"><i class="fas fa-notes-medical"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_diagnosticos }}</div>
+      <div class="stat-label">Diagnósticos</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-tooth"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_tratamientos }}</div>
+      <div class="stat-label">Tratamientos</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-prescription-bottle-alt"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ total_recetas }}</div>
+      <div class="stat-label">Recetas</div>
+    </div>
+  </div>
+</div>
+
+<!-- Accesos rápidos -->
+<div class="card mb-4">
+  <div class="card-header">
+    <span class="card-title"><i class="fas fa-bolt" style="color:#fbbc04"></i> Acciones Rápidas</span>
+  </div>
+  <div class="card-body">
+    <div style="display:flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="{% url 'cita_crear' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Nueva Cita</a>
+      <a href="{% url 'paciente_crear' %}" class="btn btn-success"><i class="fas fa-plus"></i> Nuevo Paciente</a>
+      <a href="{% url 'diagnostico_crear' %}" class="btn btn-warning"><i class="fas fa-plus"></i> Nuevo Diagnóstico</a>
+      <a href="{% url 'tratamiento_crear' %}" class="btn btn-secondary"><i class="fas fa-plus"></i> Nuevo Tratamiento</a>
+      <a href="{% url 'receta_crear' %}" class="btn btn-secondary"><i class="fas fa-plus"></i> Nueva Receta</a>
+    </div>
+  </div>
+</div>
+
+<div class="grid-cols-2">
+  <!-- Últimas citas -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-calendar-check" style="color:var(--primary)"></i> Últimas Citas</span>
+      <a href="{% url 'cita_lista' %}" class="btn btn-secondary btn-sm">Ver todas</a>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Odontólogo</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cita in ultimas_citas %}
+          <tr>
+            <td>
+              <a href="{% url 'paciente_detalle' cita.paciente.pk %}" class="text-primary" style="text-decoration:none; font-weight:500;">
+                {{ cita.paciente.nombre_completo }}
+              </a>
+            </td>
+            <td class="text-muted small">{{ cita.odontologo.apellidos }}</td>
+            <td class="small">{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td>
+              <span class="badge badge-{{ cita.estado|lower|cut:' ' }}">{{ cita.estado }}</span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-muted">No hay citas registradas</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Últimos pacientes -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-user-injured" style="color:var(--secondary)"></i> Últimos Pacientes</span>
+      <a href="{% url 'paciente_lista' %}" class="btn btn-secondary btn-sm">Ver todos</a>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for paciente in ultimos_pacientes %}
+          <tr>
+            <td>
+              <a href="{% url 'paciente_detalle' paciente.pk %}" class="text-primary" style="text-decoration:none; font-weight:500;">
+                {{ paciente.nombre_completo }}
+              </a>
+            </td>
+            <td class="small">{{ paciente.dni }}</td>
+            <td class="small text-muted">{{ paciente.telefono }}</td>
+            <td class="small text-muted">{{ paciente.created_at|date:"d/m/Y" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-muted">No hay pacientes registrados</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

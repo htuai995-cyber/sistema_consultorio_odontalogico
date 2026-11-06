@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+  <div class="card-header">
+    <span class="card-title"><i class="fas fa-calendar-check" style="color:var(--primary)"></i> {{ titulo }}</span>
+    <a href="{% url 'cita_lista' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+  </div>
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="grid-cols-2">
+        <div class="form-group">
+          <label class="form-label">{{ form.paciente.label }}</label>
+          {{ form.paciente }}
+          {% for e in form.paciente.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.odontologo.label }}</label>
+          {{ form.odontologo }}
+          {% for e in form.odontologo.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.fecha.label }}</label>
+          {{ form.fecha }}
+          {% for e in form.fecha.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.hora.label }}</label>
+          {{ form.hora }}
+          {% for e in form.hora.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.estado.label }}</label>
+          {{ form.estado }}
+          {% for e in form.estado.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ form.motivo.label }}</label>
+          {{ form.motivo }}
+          {% for e in form.motivo.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">{{ form.observaciones.label }}</label>
+        {{ form.observaciones }}
+        {% for e in form.observaciones.errors %}<div class="invalid-feedback" style="display:block;">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ accion }}</button>
+        <a href="{% url 'cita_lista' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

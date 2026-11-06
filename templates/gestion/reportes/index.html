@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}Centro de Reportes{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-chart-line" style="color:var(--primary)"></i> Centro de Reportes y Documentación Odontológica
+    </span>
+  </div>
+  <div class="card-body">
+    <p class="text-muted" style="margin-bottom: 0;">
+      Genere, filtre, imprima y exporte en formato PDF los reportes clínicos y de gestión de "Sonrisa Perfecta".
+    </p>
+  </div>
+</div>
+
+<div class="grid-cols-2 mb-4">
+  <!-- Reporte de Citas -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-calendar-check" style="color:var(--primary)"></i> Reporte de Citas</span>
+      <span class="badge badge-activo">{{ total_citas }} registros</span>
+    </div>
+    <div class="card-body">
+      <p class="small text-muted mb-3">
+        Consolidado de atenciones programadas, estado de citas, fechas, odontólogos asignados y motivos de consulta.
+      </p>
+      <form action="{% url 'cita_reporte_pdf' %}" method="get" target="_blank" style="margin-bottom: 1rem;">
+        <div class="grid-cols-2 mb-3">
+          <div>
+            <label class="form-label small">Estado</label>
+            <select name="estado" class="form-select">
+              <option value="">Todos los estados</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Confirmada">Confirmada</option>
+              <option value="Atendida">Atendida</option>
+              <option value="Cancelada">Cancelada</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label small">Fecha Específica</label>
+            <input type="date" name="fecha" class="form-control">
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </button>
+          <a href="{% url 'cita_lista' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-table"></i> Ver Listado
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reporte de Diagnósticos -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-notes-medical" style="color:var(--danger)"></i> Reporte de Diagnósticos</span>
+      <span class="badge badge-activo">{{ total_diagnosticos }} registros</span>
+    </div>
+    <div class="card-body">
+      <p class="small text-muted mb-3">
+        Informe clínico detallado de patologías bucodentales detectadas y recomendaciones por paciente.
+      </p>
+      <form action="{% url 'diagnostico_reporte_pdf' %}" method="get" target="_blank" style="margin-bottom: 1rem;">
+        <div class="grid-cols-2 mb-3">
+          <div>
+            <label class="form-label small">Búsqueda Paciente</label>
+            <input type="text" name="q" class="form-control" placeholder="Nombre o apellido...">
+          </div>
+          <div>
+            <label class="form-label small">Fecha Diagnóstico</label>
+            <input type="date" name="fecha" class="form-control">
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </button>
+          <a href="{% url 'diagnostico_lista' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-table"></i> Ver Listado
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="grid-cols-2">
+  <!-- Reporte de Tratamientos -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-tooth" style="color:var(--primary)"></i> Reporte de Tratamientos</span>
+      <span class="badge badge-activo">{{ total_tratamientos }} registros</span>
+    </div>
+    <div class="card-body">
+      <p class="small text-muted mb-3">
+        Seguimiento de procedimientos odontológicos, fechas de ejecución, costos y balance económico.
+      </p>
+      <form action="{% url 'tratamiento_reporte_pdf' %}" method="get" target="_blank" style="margin-bottom: 1rem;">
+        <div class="grid-cols-2 mb-3">
+          <div>
+            <label class="form-label small">Estado Tratamiento</label>
+            <select name="estado" class="form-select">
+              <option value="">Todos los estados</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En proceso">En proceso</option>
+              <option value="Finalizado">Finalizado</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label small">Fecha de Inicio</label>
+            <input type="date" name="fecha" class="form-control">
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </button>
+          <a href="{% url 'tratamiento_lista' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-table"></i> Ver Listado
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reporte de Recetas -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-prescription-bottle-alt" style="color:var(--secondary)"></i> Reporte de Recetas</span>
+      <span class="badge badge-activo">{{ total_recetas }} registros</span>
+    </div>
+    <div class="card-body">
+      <p class="small text-muted mb-3">
+        Bitácora de prescripciones farmacológicas emitidas, dosis, posología y frecuencia por paciente.
+      </p>
+      <form action="{% url 'receta_reporte_pdf' %}" method="get" target="_blank" style="margin-bottom: 1rem;">
+        <div class="grid-cols-2 mb-3">
+          <div>
+            <label class="form-label small">Medicamento o Paciente</label>
+            <input type="text" name="q" class="form-control" placeholder="Buscar...">
+          </div>
+          <div>
+            <label class="form-label small">Fecha Emisión</label>
+            <input type="date" name="fecha" class="form-control">
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </button>
+          <a href="{% url 'receta_lista' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-table"></i> Ver Listado
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

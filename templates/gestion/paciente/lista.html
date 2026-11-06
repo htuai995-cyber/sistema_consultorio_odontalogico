@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Pacientes{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-user-injured" style="color:var(--primary)"></i> Pacientes
+      <span class="badge badge-activo" style="margin-left: 0.5rem;">{{ total_registros }}</span>
+    </span>
+    <a href="{% url 'paciente_crear' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Paciente</a>
+  </div>
+  <div class="card-body">
+    <form method="get" class="search-bar mb-3">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Buscar por nombre, apellido o DNI...">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+      {% if q %}<a href="{% url 'paciente_lista' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
+    </form>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pac in pacientes %}
+          <tr>
+            <td class="text-muted small">{{ pac.id }}</td>
+            <td>
+              <a href="{% url 'paciente_detalle' pac.pk %}" class="text-primary" style="font-weight:600; text-decoration:none;">
+                {{ pac.nombre_completo }}
+              </a>
+            </td>
+            <td class="small">{{ pac.dni }}</td>
+            <td class="small text-muted">{{ pac.telefono }}</td>
+            <td class="small text-muted">{{ pac.correo }}</td>
+            <td class="small text-muted">{{ pac.created_at|date:"d/m/Y" }}</td>
+            <td>
+              <div class="d-flex gap-2">
+                <a href="{% url 'paciente_detalle' pac.pk %}" class="btn btn-secondary btn-sm" title="Ver detalle"><i class="fas fa-eye"></i></a>
+                <a href="{% url 'paciente_editar' pac.pk %}" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'paciente_eliminar' pac.pk %}" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted" style="padding:2rem;">No hay pacientes registrados</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if pacientes.has_other_pages %}
+    <div class="pagination">
+      {% if pacientes.has_previous %}
+        <a href="?page={{ pacientes.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-left"></i></a>
+      {% endif %}
+      {% for num in pacientes.paginator.page_range %}
+        <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}" class="page-link {% if pacientes.number == num %}active{% endif %}">{{ num }}</a>
+      {% endfor %}
+      {% if pacientes.has_next %}
+        <a href="?page={{ pacientes.next_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-right"></i></a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

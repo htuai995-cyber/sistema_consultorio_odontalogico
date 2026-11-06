@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sonrisa Perfecta{% endblock %} | Consultorio Odontológico</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <a href="{% url 'dashboard' %}" class="sidebar-brand">
+    <div class="sidebar-brand-icon">🦷</div>
+    <div class="sidebar-brand-text">
+      Sonrisa Perfecta
+      <span>Gestión Odontológica</span>
+    </div>
+  </a>
+
+  <ul class="sidebar-nav">
+    <li class="nav-item">
+      <a href="{% url 'dashboard' %}" class="nav-link">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </a>
+    </li>
+
+    <li class="nav-section-title">Gestión</li>
+    <li class="nav-item">
+      <a href="{% url 'paciente_lista' %}" class="nav-link">
+        <i class="fas fa-user-injured"></i> Pacientes
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'odontologo_lista' %}" class="nav-link">
+        <i class="fas fa-user-md"></i> Odontólogos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'especialidad_lista' %}" class="nav-link">
+        <i class="fas fa-stethoscope"></i> Especialidades
+      </a>
+    </li>
+
+    <li class="nav-section-title">Atención</li>
+    <li class="nav-item">
+      <a href="{% url 'cita_lista' %}" class="nav-link">
+        <i class="fas fa-calendar-check"></i> Citas
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'diagnostico_lista' %}" class="nav-link">
+        <i class="fas fa-notes-medical"></i> Diagnósticos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'tratamiento_lista' %}" class="nav-link">
+        <i class="fas fa-tooth"></i> Tratamientos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'receta_lista' %}" class="nav-link">
+        <i class="fas fa-prescription-bottle-alt"></i> Recetas
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'reportes_centro' %}" class="nav-link">
+        <i class="fas fa-file-pdf"></i> Centro de Reportes
+      </a>
+    </li>
+
+    <li class="nav-section-title">Sistema</li>
+    <li class="nav-item">
+      <a href="{% url 'logout' %}" class="nav-link">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-secondary btn-icon" id="sidebarToggle" title="Menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <span class="page-title">{% block page_title %}{{ titulo }}{% endblock %}</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ALERTS -->
+  <div style="padding: 0 1.5rem; margin-top: 0.75rem;">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+          {{ message }}
+          <button class="alert-close"><i class="fas fa-times"></i></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- CONTENT -->
+  <main class="content-area">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="text-align:center; padding: 1rem; color: #5f6368; font-size: 0.8rem; border-top: 1px solid #dadce0; background: white; margin-top: auto;">
+    © 2024 Consultorio Odontológico "Sonrisa Perfecta" · Todos los derechos reservados
+  </footer>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
+

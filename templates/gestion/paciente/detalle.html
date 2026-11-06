@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}Historial Clínico - {{ paciente.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="print-header">
+  <h2>Consultorio Odontológico "Sonrisa Perfecta"</h2>
+  <h4>Historial Clínico Odontológico</h4>
+  <p class="small text-muted">Paciente: {{ paciente.nombre_completo }} | DNI: {{ paciente.dni }} | Impreso el: {% now "d/m/Y H:i" %}</p>
+</div>
+
+<!-- Barra superior de acciones -->
+<div class="card mb-4">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-folder-open" style="color:var(--primary)"></i> Expediente Clínico de <strong>{{ paciente.nombre_completo }}</strong>
+    </span>
+    <div class="d-flex gap-2 no-print">
+      <button onclick="window.print()" class="btn btn-secondary btn-sm">
+        <i class="fas fa-print"></i> Imprimir Historial
+      </button>
+      <a href="{% url 'paciente_editar' paciente.pk %}" class="btn btn-warning btn-sm">
+        <i class="fas fa-edit"></i> Editar Paciente
+      </a>
+      <a href="{% url 'cita_crear' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-calendar-plus"></i> Agendar Cita
+      </a>
+      <a href="{% url 'paciente_lista' %}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="grid-cols-4">
+      <div>
+        <span class="text-muted small">DNI:</span>
+        <div><strong>{{ paciente.dni }}</strong></div>
+      </div>
+      <div>
+        <span class="text-muted small">Fecha de Nacimiento:</span>
+        <div>{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</div>
+      </div>
+      <div>
+        <span class="text-muted small">Teléfono:</span>
+        <div>{{ paciente.telefono }}</div>
+      </div>
+      <div>
+        <span class="text-muted small">Correo Electrónico:</span>
+        <div>{{ paciente.correo }}</div>
+      </div>
+    </div>
+    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #eee;">
+      <span class="text-muted small">Dirección de Domicilio:</span>
+      <div>{{ paciente.direccion }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Diagnósticos y Tratamientos -->
+<div class="grid-cols-2 mb-4">
+  <!-- Diagnósticos -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-notes-medical" style="color:var(--danger)"></i> Diagnósticos Clínicos ({{ diagnosticos.count }})</span>
+      <a href="{% url 'diagnostico_crear' %}" class="btn btn-primary btn-sm no-print"><i class="fas fa-plus"></i> Nuevo</a>
+    </div>
+    <div class="card-body" style="max-height: 380px; overflow-y: auto;">
+      {% for d in diagnosticos %}
+      <div style="padding: 0.75rem; background: #f8f9fa; border-radius: 6px; margin-bottom: 0.75rem; border-left: 3px solid var(--primary);">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <strong style="color:var(--primary); font-size: 0.9rem;">Diagnóstico #{{ d.id }}</strong>
+          <span class="text-muted small">{{ d.fecha|date:"d/m/Y" }}</span>
+        </div>
+        <p style="font-size: 0.88rem; margin-bottom: 0.3rem;"><strong>Cuadro:</strong> {{ d.descripcion }}</p>
+        <p class="text-muted small" style="margin-bottom: 0;"><strong>Recomendaciones:</strong> {{ d.recomendaciones }}</p>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center" style="padding: 1.5rem 0;">No registra diagnósticos clínicos.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tratamientos -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-tooth" style="color:var(--primary)"></i> Procedimientos y Tratamientos ({{ tratamientos.count }})</span>
+      <a href="{% url 'tratamiento_crear' %}" class="btn btn-primary btn-sm no-print"><i class="fas fa-plus"></i> Nuevo</a>
+    </div>
+    <div class="card-body" style="max-height: 380px; overflow-y: auto;">
+      {% for t in tratamientos %}
+      <div style="padding: 0.75rem; background: #f8f9fa; border-radius: 6px; margin-bottom: 0.75rem; border-left: 3px solid var(--secondary);">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <strong style="font-size: 0.9rem;">{{ t.nombre }}</strong>
+          <span class="badge badge-{{ t.estado|lower|cut:' ' }}">{{ t.estado }}</span>
+        </div>
+        <p class="small text-muted" style="margin-bottom: 0.25rem;">{{ t.descripcion }}</p>
+        <div class="d-flex justify-content-between small text-muted">
+          <span>{{ t.fecha_inicio|date:"d/m/Y" }} al {{ t.fecha_fin|date:"d/m/Y" }}</span>
+          <strong style="color:var(--dark);">S/. {{ t.costo }}</strong>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center" style="padding: 1.5rem 0;">No registra tratamientos asociados.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Citas y Recetas -->
+<div class="grid-cols-2">
+  <!-- Citas -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-calendar-check" style="color:var(--warning)"></i> Registro de Citas ({{ citas.count }})</span>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Odontólogo</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in citas %}
+          <tr>
+            <td class="small">{{ c.fecha|date:"d/m/Y" }}</td>
+            <td class="small">{{ c.hora|time:"H:i" }}</td>
+            <td class="small">{{ c.odontologo.nombre_completo }}</td>
+            <td class="small text-muted">{{ c.motivo|truncatechars:25 }}</td>
+            <td><span class="badge badge-{{ c.estado|lower|cut:' ' }}">{{ c.estado }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted" style="padding: 1.5rem 0;">No registra citas previas.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recetas -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-prescription-bottle-alt" style="color:var(--secondary)"></i> Recetas Prescritas ({{ recetas.count }})</span>
+      <a href="{% url 'receta_crear' %}" class="btn btn-primary btn-sm no-print"><i class="fas fa-plus"></i> Nueva</a>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Medicamento</th>
+            <th>Dosis</th>
+            <th>Frecuencia</th>
+            <th>Duración</th>
+            <th>Emisión</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in recetas %}
+          <tr>
+            <td><strong>{{ r.medicamento }}</strong></td>
+            <td class="small text-muted">{{ r.dosis }}</td>
+            <td class="small text-muted">{{ r.frecuencia }}</td>
+            <td class="small text-muted">{{ r.duracion }}</td>
+            <td class="small">{{ r.fecha_emision|date:"d/m/Y" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted" style="padding: 1.5rem 0;">No registra recetas emitidas.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

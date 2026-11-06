@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Especialidades{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-stethoscope" style="color:var(--primary)"></i> Especialidades
+      <span class="badge badge-activo" style="margin-left: 0.5rem;">{{ total_registros }}</span>
+    </span>
+    <a href="{% url 'especialidad_crear' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Nueva Especialidad</a>
+  </div>
+  <div class="card-body">
+    <form method="get" class="search-bar mb-3">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Buscar especialidad...">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+      {% if q %}<a href="{% url 'especialidad_lista' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
+    </form>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for esp in especialidades %}
+          <tr>
+            <td class="text-muted small">{{ esp.id }}</td>
+            <td><strong>{{ esp.nombre }}</strong></td>
+            <td class="text-muted small">{{ esp.descripcion|truncatechars:60 }}</td>
+            <td><span class="badge badge-{{ esp.estado|lower }}">{{ esp.estado }}</span></td>
+            <td>
+              <div class="d-flex gap-2">
+                <a href="{% url 'especialidad_editar' esp.pk %}" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'especialidad_eliminar' esp.pk %}" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted" style="padding: 2rem;">No hay especialidades registradas</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if especialidades.has_other_pages %}
+    <div class="pagination">
+      {% if especialidades.has_previous %}
+        <a href="?page={{ especialidades.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-left"></i></a>
+      {% endif %}
+      {% for num in especialidades.paginator.page_range %}
+        <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}" class="page-link {% if especialidades.number == num %}active{% endif %}">{{ num }}</a>
+      {% endfor %}
+      {% if especialidades.has_next %}
+        <a href="?page={{ especialidades.next_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-right"></i></a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

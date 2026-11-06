@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Citas Médicas{% endblock %}
+{% block content %}
+<div class="print-header">
+  <h2>Consultorio Odontológico "Sonrisa Perfecta"</h2>
+  <h4>Reporte de Citas Odontológicas</h4>
+  <p class="small text-muted">Fecha de impresión: {% now "d/m/Y H:i" %}</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-calendar-check" style="color:var(--primary)"></i> Citas Odontológicas
+      <span class="badge badge-activo" style="margin-left: 0.5rem;">{{ total_registros }}</span>
+    </span>
+    <div class="d-flex gap-2">
+      <button onclick="window.print()" class="btn btn-secondary btn-sm" title="Imprimir reporte">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+      <button onclick="descargarPDF('{% url 'cita_reporte_pdf' %}')" class="btn btn-danger btn-sm" title="Descargar como archivo PDF">
+        <i class="fas fa-file-pdf"></i> Guardar PDF
+      </button>
+      <a href="{% url 'cita_crear' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Nueva Cita
+      </a>
+    </div>
+  </div>
+  <div class="card-body">
+    <form method="get" class="search-bar mb-3" style="flex-wrap: wrap;">
+      <div class="search-input-group" style="flex: 2; min-width: 220px;">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Buscar por paciente u odontólogo...">
+      </div>
+      <div style="flex: 1; min-width: 160px;">
+        <select name="estado" class="form-select">
+          <option value="">Todos los estados</option>
+          {% for e in estados %}
+            <option value="{{ e }}" {% if estado == e %}selected{% endif %}>{{ e }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="flex: 1; min-width: 150px;">
+        <input type="date" name="fecha" value="{{ fecha }}" class="form-control" title="Filtrar por fecha">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
+      {% if q or estado or fecha %}
+        <a href="{% url 'cita_lista' %}" class="btn btn-secondary">Limpiar</a>
+      {% endif %}
+    </form>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Paciente</th>
+            <th>DNI</th>
+            <th>Odontólogo</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+            <th class="no-print">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cita in citas %}
+          <tr>
+            <td class="text-muted small">{{ cita.id }}</td>
+            <td>
+              <a href="{% url 'paciente_detalle' cita.paciente.pk %}" class="text-primary" style="font-weight:600; text-decoration:none;">
+                {{ cita.paciente.nombre_completo }}
+              </a>
+            </td>
+            <td class="small">{{ cita.paciente.dni }}</td>
+            <td class="small">{{ cita.odontologo.nombre_completo }}</td>
+            <td class="small">{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td class="small">{{ cita.hora|time:"H:i" }}</td>
+            <td class="small text-muted">{{ cita.motivo|truncatechars:35 }}</td>
+            <td>
+              <span class="badge badge-{{ cita.estado|lower|cut:' ' }}">{{ cita.estado }}</span>
+            </td>
+            <td class="no-print">
+              <div class="d-flex gap-2">
+                <a href="{% url 'cita_editar' cita.pk %}" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'cita_eliminar' cita.pk %}" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="9" class="text-center text-muted" style="padding:2rem;">No se encontraron citas con los filtros indicados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if citas.has_other_pages %}
+    <div class="pagination no-print">
+      {% if citas.has_previous %}
+        <a href="?page={{ citas.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if estado %}&estado={{ estado }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link"><i class="fas fa-chevron-left"></i></a>
+      {% endif %}
+      {% for num in citas.paginator.page_range %}
+        <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if estado %}&estado={{ estado }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link {% if citas.number == num %}active{% endif %}">{{ num }}</a>
+      {% endfor %}
+      {% if citas.has_next %}
+        <a href="?page={{ citas.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if estado %}&estado={{ estado }}{% endif %}{% if fecha %}&fecha={{ fecha }}{% endif %}" class="page-link"><i class="fas fa-chevron-right"></i></a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

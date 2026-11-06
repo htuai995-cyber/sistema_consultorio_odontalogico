@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Odontólogos{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">
+      <i class="fas fa-user-md" style="color:var(--primary)"></i> Odontólogos
+      <span class="badge badge-activo" style="margin-left: 0.5rem;">{{ total_registros }}</span>
+    </span>
+    <a href="{% url 'odontologo_crear' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Odontólogo</a>
+  </div>
+  <div class="card-body">
+    <form method="get" class="search-bar mb-3">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" value="{{ q }}" class="form-control search-input" placeholder="Buscar por nombre, apellido o colegiatura...">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+      {% if q %}<a href="{% url 'odontologo_lista' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
+    </form>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr><th>#</th><th>Nombre</th><th>Colegiatura</th><th>Especialidad</th><th>Teléfono</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          {% for od in odontologos %}
+          <tr>
+            <td class="text-muted small">{{ od.id }}</td>
+            <td><strong>{{ od.nombre_completo }}</strong></td>
+            <td class="small">{{ od.numero_colegiatura }}</td>
+            <td class="small"><span class="badge badge-activa">{{ od.especialidad }}</span></td>
+            <td class="small text-muted">{{ od.telefono }}</td>
+            <td class="small text-muted">{{ od.correo }}</td>
+            <td><span class="badge badge-{{ od.estado|lower }}">{{ od.estado }}</span></td>
+            <td>
+              <div class="d-flex gap-2">
+                <a href="{% url 'odontologo_editar' od.pk %}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'odontologo_eliminar' od.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="8" class="text-center text-muted" style="padding:2rem;">No hay odontólogos registrados</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if odontologos.has_other_pages %}
+    <div class="pagination">
+      {% if odontologos.has_previous %}<a href="?page={{ odontologos.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-left"></i></a>{% endif %}
+      {% for num in odontologos.paginator.page_range %}
+        <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}" class="page-link {% if odontologos.number == num %}active{% endif %}">{{ num }}</a>
+      {% endfor %}
+      {% if odontologos.has_next %}<a href="?page={{ odontologos.next_page_number }}{% if q %}&q={{ q }}{% endif %}" class="page-link"><i class="fas fa-chevron-right"></i></a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
